@@ -79,7 +79,7 @@ class BaseCommentNode(template.Node):
             content_type = ctype,
             object_pk    = smart_text(object_pk),
             site__pk     = settings.SITE_ID,
-        )
+        ).select_related('user')
 
         # The is_public and is_removed fields are implementation details of the
         # built-in comment model's spam filtering system, so they might not

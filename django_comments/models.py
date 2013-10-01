@@ -12,6 +12,9 @@ from django_comments.managers import CommentManager
 
 COMMENT_MAX_LENGTH = getattr(settings, 'COMMENT_MAX_LENGTH', 3000)
 
+USER_MODEL = 'auth.User'
+if hasattr(settings, 'AUTH_USER_MODEL'):
+    USER_MODEL = settings.AUTH_USER_MODEL
 
 class BaseCommentAbstractModel(models.Model):
     """
@@ -51,7 +54,7 @@ class Comment(BaseCommentAbstractModel):
     # Who posted this comment? If ``user`` is set then it was an authenticated
     # user; otherwise at least user_name should have been set and the comment
     # was posted by a non-authenticated user.
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('user'),
+    user = models.ForeignKey(USER_MODEL, verbose_name=_('user'),
                     blank=True, null=True, related_name="%(class)s_comments")
     user_name = models.CharField(_("user's name"), max_length=50, blank=True)
     user_email = models.EmailField(_("user's email address"), blank=True)
@@ -175,7 +178,7 @@ class CommentFlag(models.Model):
     design users are only allowed to flag a comment with a given flag once;
     if you want rating look elsewhere.
     """
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('user'), related_name="comment_flags")
+    user = models.ForeignKey(USER_MODEL, verbose_name=_('user'), related_name="comment_flags")
     comment = models.ForeignKey(Comment, verbose_name=_('comment'), related_name="flags")
     flag = models.CharField(_('flag'), max_length=30, db_index=True)
     flag_date = models.DateTimeField(_('date'), default=None)
